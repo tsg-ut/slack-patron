@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Emoji from './Emoji';
+import MrkdwnText from './MrkdwnText';
 import UserMention from './UserMention';
 import ChannelMention from './ChannelMention';
 
@@ -135,16 +136,89 @@ class RichTextBlock extends Component {
         {
           elements.map((element, index) => {
             if (element.type === 'rich_text_section') {
-              return <RichTextSection key={index} elements={element.elements} />
+              return <RichTextSection key={index} elements={element.elements} />;
             }
             if (element.type === 'rich_text_list') {
-              return <RichTextList key={index} elements={element.elements} style={element.style} />
+              return <RichTextList key={index} elements={element.elements} style={element.style} />;
             }
             if (element.type === 'rich_text_preformatted') {
-              return <RichTextPreformatted key={index} elements={element.elements} />
+              return <RichTextPreformatted key={index} elements={element.elements} />;
             }
             if (element.type === 'rich_text_quote') {
-              return <RichTextQuote key={index} elements={element.elements} />
+              return <RichTextQuote key={index} elements={element.elements} />;
+            }
+            return <span style={{color: 'red'}}>ERROR: Unsupported element type {element.type}</span>;
+          })
+        }
+      </div>
+    );
+  }
+}
+
+class TextObject extends Component {
+  renderText() {
+    const {text} = this.props;
+    if (text) {
+      // TODO: verbatim, emoji
+      if (text.type === 'mrkdwn') {
+        return <MrkdwnText text={text.text} />;
+      }
+      if (text.type === 'plain_text') {
+        return <span>{text.text}</span>;
+      }
+      return <span style={{color: 'red'}}>ERROR: Unsupported text type {text.type}</span>;
+    }
+  }
+  render() {
+    return (
+      <span className="text-object">
+        {this.renderText()}
+      </span>
+    );
+  }
+}
+
+class SectionBlock extends Component {
+  renderFields() {
+    const {fields} = this.props;
+    if (Array.isArray(fields)) {
+      return (
+        <div className="section-block-fields">
+          {
+            fields.map((field, index) => (
+              <div key={index} className="section-block-field">
+                <TextObject text={field}/>
+              </div>
+            ))
+          }
+        </div>
+      )
+    }
+  }
+  render() {
+    return (
+      <div className="section-block">
+        <div className="section-text">
+          <TextObject text={this.props.text}/>
+        </div>
+        {this.renderFields()}
+      </div>
+    );
+  }
+}
+
+class ContextBlock extends Component {
+  render() {
+    const {elements} = this.props;
+    return (
+      <div className="context-block">
+        {
+          elements.map((element, index) => {
+            if (element.type === 'mrkdwn' || element.type === 'plain_text') {
+              return <TextObject key={index} text={element}/>;
+            }
+            if (element.type === 'image') {
+              return <img key={index} className="context-block-image" src={element.image_url} alt={element.alt_text} />;
             }
             return <span style={{color: 'red'}}>ERROR: Unsupported element type {element.type}</span>
           })
@@ -164,13 +238,25 @@ export default class extends Component {
         </div>
       )
     }
+    if (block.type === 'section') {
+      return (
+        <div className="slack-message-block">
+          <SectionBlock text={block.text} fields={block.fields} accessory={block.accessory} />
+        </div>
+      )
+    }
+    if (block.type === 'context') {
+      return (
+        <div className="slack-message-block">
+          <ContextBlock elements={block.elements} />
+        </div>
+      )
+    }
     return (
       <div className="slack-message-block">
         {/* TODO */}
         {/*
-          <pre>
-            {JSON.stringify(block, null, '  ')}
-          </pre>
+          <pre>{JSON.stringify(block, null, '  ')}</pre>
         */}
       </div>
     );

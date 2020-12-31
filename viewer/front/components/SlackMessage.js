@@ -7,7 +7,6 @@ import MrkdwnText from './message/MrkdwnText';
 import Files from './message/Files';
 import Block from './message/Block';
 import Attachment from './message/Attachment';
-import { get } from 'lodash';
 import find from 'lodash/find';
 
 const emojiData = new EmojiData();
@@ -132,10 +131,25 @@ export default class extends Component {
         </div>
       );
     };
+    const getIcon = (message) => {
+      const attachment = find(message.attachments, (attachment) => attachment.text);
+      if (message.icons) {
+        if (message.icons.image_48) {
+          return message.icons.image_48;
+        }
+        if (message.icons.emoji) {
+          return this.getEmojiImage(message.icons.emoji.slice(1, -1));
+        }
+      }
+      if (attachment) {
+        return attachment.author_icon;
+      }
+      return '';
+    };
     const botMessage = (teamInfo, message, showChannel) => {
       const attachment = find(message.attachments, (attachment) => attachment.text);
       const text = (!message.text && attachment) ? attachment.text : message.text;
-      const icon = message.icons ? message.icons.image_48 : (attachment ? attachment.author_icon : '');
+      const icon = getIcon(message);
       return <SlackMessagePrototype
           message={message}
           icon={icon}
