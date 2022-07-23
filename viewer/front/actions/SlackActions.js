@@ -239,21 +239,22 @@ export default {
           const contentText = await contentTextPromise;
           const contents = JSON.parse(contentText);
 
-          for (const content of contents) {
-            try {
-              if (filename === 'channels.json') {
-                await db.channels.add(content);
-              } else if (filename === 'users.json') {
-                await db.users.add(content);
-              } else if (filename.includes('/')) {
-                const channelName = filename.split('/')[0];
-                const channelId = channelIds.get(channelName);
-                await db.messages.add({...content, channel: channelId});
-              } else {
-                continue;
-              }
-            } catch (e) {
+          try {
+            if (filename === 'channels.json') {
+              await db.channels.bulkAdd(contents);
+            } else if (filename === 'users.json') {
+              await db.users.bulkAdd(contents);
+            } else if (filename.includes('/')) {
+              const channelName = filename.split('/')[0];
+              const channelId = channelIds.get(channelName);
+              const contentsWithChannel = contents.map(c => {
+                return {...c, channel: channelId}
+              })
+              await db.messages.bulkAdd(contentsWithChannel);
+            } else {
+              continue;
             }
+          } catch (e) {
           }
         }
 
