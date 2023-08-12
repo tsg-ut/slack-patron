@@ -114,6 +114,25 @@ def messages(params)
   return return_messages, has_more_message
 end
 
+def text_embedding(string)
+  uri = URI.parse('http://feature_extractor:9294/text')
+  http = Net:HTTP.new(uri.host, uri.port)
+  query = {
+    text: string
+  }
+  req = Net::HTTP::Post.new(uri.path)
+  req.initialize_http_header({ 'Content-Type' => 'application/json' })
+  req.body = query.to_json
+
+  res = http.request(req)
+  if res.is_a?(Net::HTTPSuccess)
+    res_data = JSON.parse(res.body)
+    return res_data['vector'], true
+  else
+    return [], false
+  end
+end
+
 def search(params)
   limit = params[:limit] || 100
   ts_direction = params[:min_ts].nil? ? 'desc' : 'asc'
@@ -121,6 +140,8 @@ def search(params)
     gte: params[:min_ts],
     lte: params[:max_ts],
   }
+
+  emb, ok = text_embedding(params[:search])
 
   uri = URI.parse('http://elasticsearch:9200/slack_logger.messages/_search')
   http = Net::HTTP.new(uri.host, uri.port)
@@ -151,6 +172,14 @@ def search(params)
       fields: { text: {} }
     }
   }
+  if ok
+    query['knn'] = {
+      field: "text_vector",
+      query_vector: emb,
+      k: 10,
+      num_candidates: 100
+    }
+    p query
   req = Net::HTTP::Post.new(uri.path)
   req.initialize_http_header({ 'Content-Type' => 'application/json' })
   req.body = query.to_json

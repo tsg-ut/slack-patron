@@ -28,6 +28,12 @@ curl -H "Content-Type: application/json" -XPUT 'http://elasticsearch:9200/slack_
       "type": "text",
       "analyzer": "kuromoji_analyzer"
     },
+    "text_vector": {
+      "type": "dense_vector",
+      "dims": 768,
+      "index": true,
+      "similarity": "dot_product"
+    },
     "ts": {
       "type": "double"
     },
@@ -182,4 +188,4 @@ curl -H "Content-Type: application/json" -XPUT 'http://elasticsearch:9200/slack_
 
 curl -XPOST 'http://elasticsearch:9200/slack_logger.messages/_refresh' -v
 
-/bin/monstache -f monstache.toml
+/bin/monstache -f monstache.toml -mapper-plugin-path /bin/plugin.so

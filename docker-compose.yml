@@ -42,6 +42,17 @@ services:
     depends_on:
       - mongo
       - elasticsearch
+      - feature_extractor
+    restart: always
+  
+  feature_extractor:
+    build: feature_extractor
+    ports:
+      - "127.0.0.1:9294:9294"
+    volumes:
+      - modelcache:/root/.cache/sentence_transformers
+    environment:
+      - SENTENCE_TRANSFORMERS_HOME=/root/.cache/sentence_transformers
     restart: always
 
   elasticsearch:
@@ -49,6 +60,7 @@ services:
     environment:
       - ES_JAVA_OPTS=-Xms200m -Xmx640m -XX:G1PeriodicGCInterval=60k
       - discovery.type=single-node
+      - xpack.security.enabled=false
     ports:
       - "127.0.0.1:9200:9200"
     volumes:
@@ -65,6 +77,7 @@ services:
     restart: always
 
 volumes:
+  modelcache:
   esdata:
   mongodata:
   oplog:

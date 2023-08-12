@@ -20,7 +20,6 @@ RUN bundle install
 
 COPY viewer/package.json ${SRCDIR}/viewer/
 COPY viewer/package-lock.json ${SRCDIR}/viewer/
-RUN cd ${SRCDIR}/viewer && npm install
 
 CMD ./viewer/setup.sh && bundle exec puma viewer/config.ru -C viewer/puma.rb -p 9292
 
