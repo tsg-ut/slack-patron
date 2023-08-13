@@ -116,7 +116,7 @@ end
 
 def text_embedding(string)
   uri = URI.parse('http://feature_extractor:9294/text')
-  http = Net:HTTP.new(uri.host, uri.port)
+  http = Net::HTTP.new(uri.host, uri.port)
   query = {
     text: string
   }
@@ -180,6 +180,7 @@ def search(params)
       num_candidates: 100
     }
     p query
+  end
   req = Net::HTTP::Post.new(uri.path)
   req.initialize_http_header({ 'Content-Type' => 'application/json' })
   req.body = query.to_json
