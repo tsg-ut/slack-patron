@@ -250,6 +250,21 @@ class HeaderBlock extends Component {
   }
 }
 
+// https://api.slack.com/reference/block-kit/blocks#image
+class ImageBlock extends Component {
+  render() {
+    return (
+      <div className="image-block">
+        <div className="image-block-title">
+          {this.props.image.title}
+          私の睡眠記録
+        </div>
+        <Image image={this.props.image} />
+      </div>
+    );
+  }
+}
+
 export default class extends Component {
   constructor(props) {
     super(props);
@@ -310,6 +325,14 @@ export default class extends Component {
       return (
         <div className="slack-message-block">
           <HeaderBlock text={block.text} />
+        </div>
+      )
+    }
+
+    if (block.type === 'image') {
+      return (
+        <div className="slack-message-block">
+          <ImageBlock image={block} />
         </div>
       )
     }
