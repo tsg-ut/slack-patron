@@ -94,6 +94,12 @@
     @media @mobile {
       margin-top: 4px;
     }
+
+    .image-element {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+    }
   }
 
   .section-block-fields {
@@ -106,6 +112,33 @@
     .section-block-field {
       flex: 0 0 50%;
       margin: 0.1rem 0;
+    }
+  }
+}
+
+.context-block {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  color: grey;
+
+  .context-block-element, .context-block-image {
+    flex: 0 0 auto;
+
+    & + .context-block-element, & + .context-block-image {
+      margin-left: 0.3rem;
+    }
+  }
+
+  .context-block-image {
+    width: 1.2rem;
+    height: 1.2rem;
+  
+    .image-element {
+      width: 1.2rem;
+      height: 1.2rem;
+      object-fit: contain;
     }
   }
 }
