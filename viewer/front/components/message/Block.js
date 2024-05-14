@@ -222,6 +222,23 @@ class DividerBlock extends Component {
   }
 }
 
+// https://api.slack.com/reference/block-kit/blocks#actions
+class ActionsBlock extends Component {
+  render() {
+    const {elements} = this.props;
+
+    return (
+      <div className="actions-block">
+        {elements.map((element, index) => (
+          <div key={index} className="actions-block-element">
+            <Element element={element} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+}
+
 export default class extends Component {
   constructor(props) {
     super(props);
@@ -266,6 +283,14 @@ export default class extends Component {
       return (
         <div className="slack-message-block">
           <DividerBlock />
+        </div>
+      )
+    }
+
+    if (block.type === 'actions') {
+      return (
+        <div className="slack-message-block">
+          <ActionsBlock elements={block.elements} />
         </div>
       )
     }
