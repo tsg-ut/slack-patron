@@ -211,6 +211,17 @@ class ContextBlock extends Component {
   }
 }
 
+// https://api.slack.com/reference/block-kit/blocks#divider
+class DividerBlock extends Component {
+  render() {
+    return (
+      <div className="divider-block">
+        <hr />
+      </div>
+    );
+  }
+}
+
 export default class extends Component {
   constructor(props) {
     super(props);
@@ -247,6 +258,14 @@ export default class extends Component {
       return (
         <div className="slack-message-block">
           <ContextBlock elements={block.elements} />
+        </div>
+      )
+    }
+
+    if (block.type === 'divider') {
+      return (
+        <div className="slack-message-block">
+          <DividerBlock />
         </div>
       )
     }
