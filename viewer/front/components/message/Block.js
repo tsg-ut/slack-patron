@@ -257,7 +257,6 @@ class ImageBlock extends Component {
       <div className="image-block">
         <div className="image-block-title">
           {this.props.image.title}
-          私の睡眠記録
         </div>
         <Image image={this.props.image} />
       </div>
