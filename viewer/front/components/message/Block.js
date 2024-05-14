@@ -239,6 +239,17 @@ class ActionsBlock extends Component {
   }
 }
 
+// https://api.slack.com/reference/block-kit/blocks#header
+class HeaderBlock extends Component {
+  render() {
+    return (
+      <div className="header-block">
+        <Text text={this.props.text} />
+      </div>
+    );
+  }
+}
+
 export default class extends Component {
   constructor(props) {
     super(props);
@@ -291,6 +302,14 @@ export default class extends Component {
       return (
         <div className="slack-message-block">
           <ActionsBlock elements={block.elements} />
+        </div>
+      )
+    }
+
+    if (block.type === 'header') {
+      return (
+        <div className="slack-message-block">
+          <HeaderBlock text={block.text} />
         </div>
       )
     }
