@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Emoji from './Emoji';
-import Element, { Text } from './Element';
+import Element, { Image, Text } from './Element';
 import UserMention from './UserMention';
 import ChannelMention from './ChannelMention';
 
@@ -185,6 +185,86 @@ class SectionBlock extends Component {
   }
 }
 
+// https://api.slack.com/reference/block-kit/blocks#context
+class ContextBlock extends Component {
+  render() {
+    const {elements} = this.props;
+
+    return (
+      <div className="context-block">
+        {elements.map((element, index) => {
+          if (element.type === 'image') {
+            return (
+              <div key={index} className="context-block-image">
+                <Image image={element} />
+              </div>
+            );
+          }
+          return (
+            <div key={index} className="context-block-element">
+              <Text text={element} />
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+}
+
+// https://api.slack.com/reference/block-kit/blocks#divider
+class DividerBlock extends Component {
+  render() {
+    return (
+      <div className="divider-block">
+        <hr />
+      </div>
+    );
+  }
+}
+
+// https://api.slack.com/reference/block-kit/blocks#actions
+class ActionsBlock extends Component {
+  render() {
+    const {elements} = this.props;
+
+    return (
+      <div className="actions-block">
+        {elements.map((element, index) => (
+          <div key={index} className="actions-block-element">
+            <Element element={element} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+}
+
+// https://api.slack.com/reference/block-kit/blocks#header
+class HeaderBlock extends Component {
+  render() {
+    return (
+      <div className="header-block">
+        <Text text={this.props.text} />
+      </div>
+    );
+  }
+}
+
+// https://api.slack.com/reference/block-kit/blocks#image
+class ImageBlock extends Component {
+  render() {
+    return (
+      <div className="image-block">
+        <div className="image-block-title">
+          {this.props.image.title}
+          私の睡眠記録
+        </div>
+        <Image image={this.props.image} />
+      </div>
+    );
+  }
+}
+
 export default class extends Component {
   constructor(props) {
     super(props);
@@ -209,11 +289,50 @@ export default class extends Component {
       )
     }
 
-    // https://api.slack.com/reference/block-kit/blocks#section
     if (block.type === 'section') {
       return (
         <div className="slack-message-block">
           <SectionBlock text={block.text} fields={block.fields} accessory={block.accessory} />
+        </div>
+      )
+    }
+
+    if (block.type === 'context') {
+      return (
+        <div className="slack-message-block">
+          <ContextBlock elements={block.elements} />
+        </div>
+      )
+    }
+
+    if (block.type === 'divider') {
+      return (
+        <div className="slack-message-block">
+          <DividerBlock />
+        </div>
+      )
+    }
+
+    if (block.type === 'actions') {
+      return (
+        <div className="slack-message-block">
+          <ActionsBlock elements={block.elements} />
+        </div>
+      )
+    }
+
+    if (block.type === 'header') {
+      return (
+        <div className="slack-message-block">
+          <HeaderBlock text={block.text} />
+        </div>
+      )
+    }
+
+    if (block.type === 'image') {
+      return (
+        <div className="slack-message-block">
+          <ImageBlock image={block} />
         </div>
       )
     }

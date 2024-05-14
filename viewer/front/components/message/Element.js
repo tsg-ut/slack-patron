@@ -20,6 +20,35 @@ export class Text extends Component {
   }
 }
 
+// https://api.slack.com/reference/block-kit/block-elements#image
+export class Image extends Component {
+  render() {
+    const {image} = this.props;
+    return (
+      <img
+        className="image-element"
+        src={image.image_url}
+        alt={image.alt_text}
+      />
+    );
+  }
+}
+
+// https://api.slack.com/reference/block-kit/block-elements#button
+export class Button extends Component {
+  render() {
+    const {button} = this.props;
+    return (
+      <button
+        className={`button-element button-element-${button.style || 'default'}`}
+        disabled
+      >
+        <Text text={button.text} />
+      </button>
+    );
+  }
+}
+
 export default class extends Component {
   constructor(props) {
     super(props);
@@ -41,13 +70,15 @@ export default class extends Component {
     if (element.type === 'button') {
       return (
         <span className="slack-message-element">
-          <button
-            className={`slack-message-button slack-message-button-${element.style || 'default'}`}
-            onClick={this.props.onClick}
-            disabled
-          >
-            <Text text={element.text} />
-          </button>
+          <Button button={element} />
+        </span>
+      );
+    }
+
+    if (element.type === 'image') {
+      return (
+        <span className="slack-message-element">
+          <Image image={element} />
         </span>
       );
     }
