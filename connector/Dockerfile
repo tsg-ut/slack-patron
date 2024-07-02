@@ -1,6 +1,8 @@
 FROM mongo:4.4.2
 
-RUN apt-get update -y && \
+RUN apt-key del 656408E390CFB1F5 && \
+	apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 656408E390CFB1F5 && \
+	apt-get update -y && \
 	apt-get install wget zip curl -y && \
 	cd /tmp && \
 	wget https://github.com/rwynn/monstache/releases/download/v6.7.3/monstache-b9dcddc.zip && \
