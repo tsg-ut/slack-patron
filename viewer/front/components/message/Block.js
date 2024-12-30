@@ -162,9 +162,9 @@ class SectionBlock extends Component {
     return (
       <div className="section-block">
         <div className="section-block-body">
-          <div className="section-block-text">
+          {text && (<div className="section-block-text">
             <Text text={text} />
-          </div>
+          </div>)}
           {fields && fields.length > 0 && (
             <div className="section-block-fields">
               {fields.map((field, index) => (
@@ -256,7 +256,7 @@ class ImageBlock extends Component {
     return (
       <div className="image-block">
         <div className="image-block-title">
-          {this.props.image.title}
+          {this.props.image.title && (<Text text={this.props.image.title} />)}
         </div>
         <Image image={this.props.image} />
       </div>
