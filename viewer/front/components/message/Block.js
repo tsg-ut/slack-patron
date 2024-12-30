@@ -256,7 +256,7 @@ class ImageBlock extends Component {
     return (
       <div className="image-block">
         <div className="image-block-title">
-          {this.props.image.title}
+          {this.props.image.title && (<Text text={this.props.image.title} />)}
         </div>
         <Image image={this.props.image} />
       </div>
