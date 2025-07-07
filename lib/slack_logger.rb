@@ -62,7 +62,7 @@ class SlackLogger
 
   def fetch_history(channel)
     begin
-      messages = slack.conversations_history(channel, 1000)
+      messages = slack.conversations_history(channel, 15)
     rescue Slack::Web::Api::Errors::NotInChannel, Slack::Web::Api::Errors::ChannelNotFound
       return # どうしようもないね
     end
@@ -84,8 +84,10 @@ class SlackLogger
 
       Channels.find.each do |channel|
         puts "loading messages from #{channel[:name]}"
+        # Note that conversations.history method is rate limited to 1 request per minute
+        # https://api.slack.com/changelog/2025-05-terms-rate-limit-update-and-faq
         fetch_history channel[:id]
-        sleep 1
+        sleep 120
       end
 
       # realtime event is joined and dont exit current thread
