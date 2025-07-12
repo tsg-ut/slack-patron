@@ -1236,6 +1236,8 @@ GEM
     aws-sigv2 (1.1.0)
     aws-sigv4 (1.4.0)
       aws-eventstream (~> 1, >= 1.0.2)
+    base64 (0.3.0)
+    bigdecimal (3.2.2)
     bson (4.14.1)
     console (1.15.3)
       fiber-local
@@ -1306,6 +1308,8 @@ PLATFORMS
 DEPENDENCIES
   async-websocket (~> 0.8.0)
   aws-sdk
+  base64 (~> 0.3.0)
+  bigdecimal (~> 3.2)
   json
   mongo
   nokogiri
