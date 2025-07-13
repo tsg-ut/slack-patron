@@ -6,6 +6,7 @@ require './lib/config'
 require './lib/slack_import'
 require './lib/slack'
 require './lib/db'
+require './lib/slack_api'
 
 $config = SlackPatronConfig.config
 $signer = nil
@@ -298,4 +299,24 @@ post '/search' do
     messages: all_messages,
     has_more_message: has_more_message,
   }.to_json
+end
+
+# API endpoint to mimic Slack's conversations.history method
+post '/api/conversations.history' do
+  content_type :json
+
+  result = SlackApi.conversations_history_response(params)
+
+  status result[:status]
+  result[:body].to_json
+end
+
+# API endpoint to mimic Slack's conversations.replies method
+post '/api/conversations.replies' do
+  content_type :json
+
+  result = SlackApi.conversations_replies_response(params)
+
+  status result[:status]
+  result[:body].to_json
 end
