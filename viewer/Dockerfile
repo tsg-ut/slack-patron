@@ -1,4 +1,4 @@
-FROM ruby:2.7.2-alpine
+FROM ruby:3.4.4-alpine
 LABEL maintainer="TSG <info@tsg.ne.jp>"
 
 ARG SRCDIR="/usr/local/slack-patron"
@@ -9,14 +9,15 @@ RUN set -x && \
 	build-base \
 	openssl \
 	nodejs \
-	nodejs-npm && \
+	npm && \
 	echo 'gem: --no-document' >> /etc/gemrc
 
 WORKDIR ${SRCDIR}
 
 COPY Gemfile ${SRCDIR}/
 COPY Gemfile.lock ${SRCDIR}/
-RUN bundle install
+RUN bundle config build.nio4r --with-cflags="-Wno-incompatible-pointer-types" && \
+    bundle install
 
 COPY viewer/package.json ${SRCDIR}/viewer/
 COPY viewer/package-lock.json ${SRCDIR}/viewer/

@@ -1,4 +1,4 @@
-FROM ruby:2.7.2-alpine
+FROM ruby:3.4.4-alpine
 LABEL maintainer="TSG <info@tsg.ne.jp>"
 
 ARG SRCDIR="/usr/local/slack-patron"
@@ -19,6 +19,7 @@ COPY Gemfile.lock ${SRCDIR}/
 
 WORKDIR ${SRCDIR}
 
-RUN bundle install
+RUN bundle config build.nio4r --with-cflags="-Wno-incompatible-pointer-types" && \
+    bundle install
 
 CMD /wait-for-it.sh -t 0 mongo:27017 -- /wait-for-it.sh -t 0 elasticsearch:9200 -- bundle exec ruby logger/logger.rb
