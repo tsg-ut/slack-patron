@@ -304,17 +304,19 @@ end
 # API endpoint to mimic Slack's conversations.history method
 post '/api/conversations.history' do
   content_type :json
-  
+
   result = SlackApi.conversations_history_response(params)
-  
-  halt result[:status], result[:body].to_json
+
+  status result[:status]
+  result[:body].to_json
 end
 
 # API endpoint to mimic Slack's conversations.replies method
 post '/api/conversations.replies' do
   content_type :json
-  
+
   result = SlackApi.conversations_replies_response(params)
-  
-  halt result[:status], result[:body].to_json
+
+  status result[:status]
+  result[:body].to_json
 end

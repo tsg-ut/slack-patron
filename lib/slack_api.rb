@@ -1,4 +1,4 @@
-require './lib/api_helpers'
+require './lib/slack_api_helpers'
 require './lib/db'
 
 # API module that aims to mimic Slack's API endpoint
@@ -16,7 +16,7 @@ module SlackApi
     cursor = params[:cursor]
 
     # Decode cursor for pagination
-    cursor_direction, cursor_ts = ApiHelpers.decode_cursor(cursor)
+    cursor_direction, cursor_ts = SlackApiHelpers.decode_cursor(cursor)
 
     conditions = [
       { '$or' => [{ hidden: { '$ne' => true } }, { subtype: 'tombstone' }] },
@@ -33,18 +33,18 @@ module SlackApi
     ]
 
     # Apply timestamp filters
-    if oldest && ApiHelpers.validate_timestamp(oldest)
+    if oldest && SlackApiHelpers.validate_timestamp(oldest)
       operator = inclusive ? '$gte' : '$gt'
       conditions << { ts: { operator => oldest } }
     end
 
-    if latest && ApiHelpers.validate_timestamp(latest)
+    if latest && SlackApiHelpers.validate_timestamp(latest)
       operator = inclusive ? '$lte' : '$lt'
       conditions << { ts: { operator => latest } }
     end
 
     # Apply cursor-based pagination
-    if cursor_ts && ApiHelpers.validate_timestamp(cursor_ts)
+    if cursor_ts && SlackApiHelpers.validate_timestamp(cursor_ts)
       if cursor_direction == 'before'
         conditions << { ts: { '$lt' => cursor_ts } }
       elsif cursor_direction == 'after'
@@ -66,12 +66,12 @@ module SlackApi
     next_cursor = nil
     if has_more && !return_messages.empty?
       last_ts = return_messages.last['ts']
-      next_cursor = ApiHelpers.encode_cursor(last_ts, 'before')
+      next_cursor = SlackApiHelpers.encode_cursor(last_ts, 'before')
     end
 
     # Transform messages to match Slack API format
     slack_messages = return_messages.map do |msg|
-      ApiHelpers.transform_message_to_slack_format(msg)
+      SlackApiHelpers.transform_message_to_slack_format(msg)
     end
 
     return slack_messages, has_more, next_cursor
@@ -79,16 +79,16 @@ module SlackApi
 
   def conversations_history_response(params)
     # Validate required parameters
-    unless params[:channel] && ApiHelpers.validate_channel_id(params[:channel])
+    unless params[:channel] && SlackApiHelpers.validate_channel_id(params[:channel])
       return { status: 400, body: { ok: false, error: 'channel_not_found' } }
     end
 
     # Validate optional timestamp parameters
-    if params[:oldest] && !ApiHelpers.validate_timestamp(params[:oldest])
+    if params[:oldest] && !SlackApiHelpers.validate_timestamp(params[:oldest])
       return { status: 400, body: { ok: false, error: 'invalid_ts_oldest' } }
     end
 
-    if params[:latest] && !ApiHelpers.validate_timestamp(params[:latest])
+    if params[:latest] && !SlackApiHelpers.validate_timestamp(params[:latest])
       return { status: 400, body: { ok: false, error: 'invalid_ts_latest' } }
     end
 
@@ -145,7 +145,7 @@ module SlackApi
     cursor = params[:cursor]
 
     # Decode cursor for pagination
-    cursor_direction, cursor_ts = ApiHelpers.decode_cursor(cursor)
+    cursor_direction, cursor_ts = SlackApiHelpers.decode_cursor(cursor)
 
     # Find the thread parent message to verify it exists
     parent_message = Messages.find({
@@ -173,18 +173,18 @@ module SlackApi
     ]
 
     # Apply timestamp filters
-    if oldest && ApiHelpers.validate_timestamp(oldest)
+    if oldest && SlackApiHelpers.validate_timestamp(oldest)
       operator = inclusive ? '$gte' : '$gt'
       conditions << { ts: { operator => oldest } }
     end
 
-    if latest && ApiHelpers.validate_timestamp(latest)
+    if latest && SlackApiHelpers.validate_timestamp(latest)
       operator = inclusive ? '$lte' : '$lt'
       conditions << { ts: { operator => latest } }
     end
 
     # Apply cursor-based pagination
-    if cursor_ts && ApiHelpers.validate_timestamp(cursor_ts)
+    if cursor_ts && SlackApiHelpers.validate_timestamp(cursor_ts)
       if cursor_direction == 'before'
         conditions << { ts: { '$lt' => cursor_ts } }
       elsif cursor_direction == 'after'
@@ -206,12 +206,12 @@ module SlackApi
     next_cursor = nil
     if has_more && !return_messages.empty?
       last_ts = return_messages.last['ts']
-      next_cursor = ApiHelpers.encode_cursor(last_ts, 'after')
+      next_cursor = SlackApiHelpers.encode_cursor(last_ts, 'after')
     end
 
     # Transform messages to match Slack API format
     slack_messages = return_messages.map do |msg|
-      ApiHelpers.transform_message_to_slack_format(msg)
+      SlackApiHelpers.transform_message_to_slack_format(msg)
     end
 
     return slack_messages, has_more, next_cursor, nil
@@ -219,20 +219,20 @@ module SlackApi
 
   def conversations_replies_response(params)
     # Validate required parameters
-    unless params[:channel] && ApiHelpers.validate_channel_id(params[:channel])
+    unless params[:channel] && SlackApiHelpers.validate_channel_id(params[:channel])
       return { status: 400, body: { ok: false, error: 'channel_not_found' } }
     end
 
-    unless params[:ts] && ApiHelpers.validate_timestamp(params[:ts])
+    unless params[:ts] && SlackApiHelpers.validate_timestamp(params[:ts])
       return { status: 400, body: { ok: false, error: 'thread_not_found' } }
     end
 
     # Validate optional timestamp parameters
-    if params[:oldest] && !ApiHelpers.validate_timestamp(params[:oldest])
+    if params[:oldest] && !SlackApiHelpers.validate_timestamp(params[:oldest])
       return { status: 400, body: { ok: false, error: 'invalid_ts_oldest' } }
     end
 
-    if params[:latest] && !ApiHelpers.validate_timestamp(params[:latest])
+    if params[:latest] && !SlackApiHelpers.validate_timestamp(params[:latest])
       return { status: 400, body: { ok: false, error: 'invalid_ts_latest' } }
     end
 

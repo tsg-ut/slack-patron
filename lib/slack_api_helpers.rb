@@ -1,7 +1,7 @@
 require 'base64'
 require './lib/db'
 
-module ApiHelpers
+module SlackApiHelpers
   extend self
 
   def encode_cursor(ts, direction = 'before')
