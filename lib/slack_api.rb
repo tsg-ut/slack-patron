@@ -194,13 +194,20 @@ module SlackApi
     inclusive = params[:inclusive] == 'true' || params[:inclusive] == '1'
     cursor = params[:cursor]
 
-    # Find the thread parent message to verify it exists
-    parent_message = Messages.find({ channel: channel, ts: ts }).first
-    unless parent_message
+    # Find the message corresponding to the provided ts
+    target_message = Messages.find({ channel: channel, ts: ts }).first
+    unless target_message
       return nil, false, nil, 'thread_not_found'
     end
 
-    thread_ts = parent_message['thread_ts'] || parent_message['ts']
+    # If the message has thread_ts and it's different from ts,
+    # return only this single message (it's a thread reply)
+    if target_message['thread_ts'] && target_message['thread_ts'] != ts
+      return [target_message], false, nil, nil
+    end
+
+    # Otherwise, return all messages in the thread (ts is the thread parent)
+    thread_ts = target_message['ts']
 
     execute_paginated_query([
       *build_base_conditions(channel),
