@@ -1,4 +1,4 @@
-ARG VARIANT=2-bullseye
+ARG VARIANT=3.4-bookworm
 FROM mcr.microsoft.com/vscode/devcontainers/ruby:${VARIANT}
 
 ARG NODE_VERSION="none"

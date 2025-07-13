@@ -1,4 +1,3 @@
-version: '3'
 services:
   logger:
     image: tyage/slack-patron-logger
@@ -36,8 +35,6 @@ services:
     environment:
       - ES_JAVA_OPTS=-Xms200m -Xmx640m -XX:G1PeriodicGCInterval=60k
       - discovery.type=single-node
-    ports:
-      - "127.0.0.1:9200:9200"
     volumes:
       - esdata:/usr/share/elasticsearch/data
     restart: always
@@ -47,8 +44,6 @@ services:
     command: --profile=1 --slowms=100 --bind_ip_all --replSet rs0
     volumes:
       - mongodata:/data/db
-    ports:
-      - "127.0.0.1:27017:27017"
     restart: always
 
 volumes:
