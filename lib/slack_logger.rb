@@ -8,12 +8,8 @@ class SlackLogger
     @slack = SlackPatron::SlackClient.new
   end
 
-  def is_private_channel(channel_name)
-    channel_name[0] == 'G'
-  end
-
-  def is_direct_message(channel_name)
-    channel_name[0] == 'D'
+  def is_private_message(message)
+    message['channel_type'] != 'channel'
   end
 
   def is_tombstone(message)
@@ -21,8 +17,7 @@ class SlackLogger
   end
 
   def skip_message?(message)
-    channel = message['channel']
-    is_private_channel(channel) || is_direct_message(channel) || is_tombstone(message)
+    is_private_message(message) || is_tombstone(message)
   end
 
   def new_message(message)
