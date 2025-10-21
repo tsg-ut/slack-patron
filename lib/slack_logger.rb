@@ -9,7 +9,7 @@ class SlackLogger
   end
 
   def is_private_message(message)
-    message['channel_type'] != 'channel'
+    !message['channel_type'].nil? && message['channel_type'] != 'channel'
   end
 
   def is_tombstone(message)
