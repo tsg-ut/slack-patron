@@ -83,6 +83,8 @@ class SlackLogger
       update_channels
 
       Channels.find.each do |channel|
+        next if channel[:is_private]
+
         puts "loading messages from #{channel[:name]}"
         # Note that conversations.history method is rate limited to 1 request per minute
         # https://api.slack.com/changelog/2025-05-terms-rate-limit-update-and-faq

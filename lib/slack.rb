@@ -26,7 +26,7 @@ module SlackPatron
 
     def conversations_list
       channels = []
-      client.conversations_list({type: 'public_channel', limit: 1000}) do |response|
+      client.conversations_list({type: 'public_channel,private_channel', limit: 1000}) do |response|
         channels += response.channels
       end
       channels
