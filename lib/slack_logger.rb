@@ -77,7 +77,8 @@ class SlackLogger
       update_users
       update_channels
 
-      Channels.find.each do |channel|
+      # カーソルのタイムアウトを避けるため、配列に変換してから処理
+      Channels.find.to_a.each do |channel|
         # ループに時間がかかるので、毎回最新情報を確認する
         begin
           new_channel = slack.conversations_info(channel[:id])
@@ -85,7 +86,11 @@ class SlackLogger
           puts "Failed to get channel info for #{channel[:id]}: #{e.message}"
           next
         end
-        next if new_channel.nil? || new_channel[:is_private]
+
+        if new_channel.nil? || new_channel[:is_private]
+          puts "skipping private or inaccessible channel #{channel[:id]}"
+          next
+        end
 
         puts "loading messages from #{new_channel[:name]}"
         # Note that conversations.history method is rate limited to 1 request per minute
