@@ -79,8 +79,13 @@ class SlackLogger
 
       Channels.find.each do |channel|
         # ループに時間がかかるので、毎回最新情報を確認する
-        new_channel = slack.conversations_info(channel[:id])
-        next if new_channel[:is_private]
+        begin
+          new_channel = slack.conversations_info(channel[:id])
+        rescue Slack::Web::Api::Errors::SlackError => e
+          puts "Failed to get channel info for #{channel[:id]}: #{e.message}"
+          next
+        end
+        next if new_channel.nil? || new_channel[:is_private]
 
         puts "loading messages from #{new_channel[:name]}"
         # Note that conversations.history method is rate limited to 1 request per minute
