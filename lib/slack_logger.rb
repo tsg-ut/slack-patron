@@ -78,12 +78,14 @@ class SlackLogger
       update_channels
 
       Channels.find.each do |channel|
-        next if channel[:is_private]
+        # ループに時間がかかるので、毎回最新情報を確認する
+        new_channel = slack.conversations_info(channel[:id])
+        next if new_channel[:is_private]
 
-        puts "loading messages from #{channel[:name]}"
+        puts "loading messages from #{new_channel[:name]}"
         # Note that conversations.history method is rate limited to 1 request per minute
         # https://api.slack.com/changelog/2025-05-terms-rate-limit-update-and-faq
-        fetch_history channel[:id]
+        fetch_history new_channel[:id]
         sleep 120
       end
 

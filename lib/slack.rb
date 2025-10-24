@@ -32,6 +32,10 @@ module SlackPatron
       channels
     end
 
+    def conversations_info(channel)
+      client.conversations_info(channel: channel).channel
+    end
+
     def users_list
       members = []
       client.users_list do |response|
