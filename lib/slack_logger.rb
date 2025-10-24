@@ -88,7 +88,7 @@ class SlackLogger
         end
 
         if new_channel.nil? || new_channel[:is_private]
-          puts "skipping private or inaccessible channel #{channel[:id]}"
+          puts "Skipping private or inaccessible channel #{channel[:id]}"
           next
         end
 
