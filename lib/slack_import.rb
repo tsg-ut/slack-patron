@@ -45,8 +45,13 @@ class SlackImport
           # channel/2015-01-01.json
           file_name = entry.name.clone.force_encoding('UTF-8')
           if !File.directory?(dist + '/' + file_name) and file_name.split('/').size > 1
+            channel_name = file_name.split('/')[0]
             puts "import #{file_name}"
-            channel = Channels.find(name: file_name.split('/')[0]).to_a[0]
+            channel = Channels.find(name: channel_name).to_a[0]
+            if channel.nil?
+              puts "WARNING: channel '#{channel_name}' not found, skipping #{file_name}"
+              next
+            end
             messages = JSON.load(entry.get_input_stream)
             import_messages(channel, messages)
           end
