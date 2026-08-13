@@ -122,9 +122,25 @@ def insert_message(message)
 
       index = { :ts => message[:ts] || message['ts'] }
       Messages.update_one(index, { :$set => message }, { :upsert => true })
+
+      update_thread_parent(message)
     end
   rescue
   end
+end
+
+# Events API does not deliver the message_replied event that adds thread_ts to
+# the parent, so set it on the parent when a reply arrives.
+def update_thread_parent(message)
+  ts = message[:ts] || message['ts']
+  thread_ts = message[:thread_ts] || message['thread_ts']
+  return if ts.nil? || thread_ts.nil? || ts == thread_ts
+
+  # A parent's thread_ts equals its own ts, so this only matches when unset
+  Messages.update_one(
+    { :ts => thread_ts, :thread_ts => { :$ne => thread_ts } },
+    { :$set => { :thread_ts => thread_ts } },
+  )
 end
 
 def add_reaction(ts, name, user)

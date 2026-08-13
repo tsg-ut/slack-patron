@@ -22,6 +22,10 @@ Slack Patron records all Slack messages into MongoDB and serves a web viewer for
 
 Ruby 3.4.4 (`.tool-versions`) + Sinatra backend, React/Redux frontend, MongoDB storage, Elasticsearch search.
 
+## Code style
+
+Write code comments in English, and keep them short. Comment only what the code cannot say by itself — a Slack API quirk, a rate limit, a non-obvious reason for an ordering — not a restatement of the line below. (Some older comments are in Japanese; leave them unless you are already editing that code.)
+
 ## Services and data flow
 
 Five containers defined in `docker-compose.yml`:
